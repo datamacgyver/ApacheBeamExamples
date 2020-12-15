@@ -8,7 +8,7 @@ import org.apache.beam.sdk.transforms.MapElements;
 import org.apache.beam.sdk.values.PCollection;
 import org.apache.beam.sdk.values.TypeDescriptors;
 
-public class ReadingDataParquet2 {
+public class ReadingDataParquet {
 
     static String schemaJSON =
             "{\"namespace\": \"ioitavro\",\n"

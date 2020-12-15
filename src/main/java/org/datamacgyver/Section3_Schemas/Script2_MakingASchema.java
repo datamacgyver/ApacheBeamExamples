@@ -6,15 +6,15 @@ import org.apache.beam.sdk.io.parquet.ParquetIO;
 import org.apache.beam.sdk.transforms.MapElements;
 import org.apache.beam.sdk.values.PCollection;
 import org.apache.beam.sdk.values.TypeDescriptors;
-import org.datamacgyver.Section1_ReadFiles.ReadingDataParquet2;
+import org.datamacgyver.Section1_ReadFiles.ReadingDataParquet;
 
-public class MakingASchema2 {
+public class Script2_MakingASchema {
 
         public static void main(String[] args) {
             String inFileParquet = "data/transformers.parquet";
             Pipeline p = Pipeline.create();
 
-            PCollection<GenericRecord> readParquet = p.apply("ReadLines field", ParquetIO.read(ReadingDataParquet2.avroSchema).from(inFileParquet));
+            PCollection<GenericRecord> readParquet = p.apply("ReadLines field", ParquetIO.read(ReadingDataParquet.avroSchema).from(inFileParquet));
             PCollection<TransformersRecord> transformersIn = readParquet.apply("Convert Schema", MapElements.via(new TransformersRecord.MakeTransformerRecordFromGeneric()));
 
             //This will use my tostring function that lombok has made me.

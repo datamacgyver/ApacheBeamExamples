@@ -6,15 +6,15 @@ import org.apache.beam.sdk.io.parquet.ParquetIO;
 import org.apache.beam.sdk.transforms.MapElements;
 import org.apache.beam.sdk.transforms.SimpleFunction;
 import org.apache.beam.sdk.values.PCollection;
-import org.datamacgyver.Section1_ReadFiles.ReadingDataParquet2;
+import org.datamacgyver.Section1_ReadFiles.ReadingDataParquet;
 
-public class Immutability1 {
+public class Script1_Immutability {
 
     public static void main(String[] args) {
         String inFileParquet = "data/transformers.parquet";
         Pipeline p = Pipeline.create();
 
-        PCollection<GenericRecord> readParquet = p.apply("ReadLines field", ParquetIO.read(ReadingDataParquet2.avroSchema).from(inFileParquet));
+        PCollection<GenericRecord> readParquet = p.apply("ReadLines field", ParquetIO.read(ReadingDataParquet.avroSchema).from(inFileParquet));
 
         //We've already seen that getting data out of a GenericRecord can be problematic. We also have the additional problem that *REcords are immutable* that is, they cannot be modified as part of any operation.
         //Therefore to update a value you need to make a new one. See, for example, this operation, which will raise with an error about changing unputs.

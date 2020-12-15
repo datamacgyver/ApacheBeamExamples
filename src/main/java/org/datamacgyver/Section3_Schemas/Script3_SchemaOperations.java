@@ -10,16 +10,16 @@ import org.apache.beam.sdk.schemas.transforms.Select;
 import org.apache.beam.sdk.transforms.MapElements;
 import org.apache.beam.sdk.values.PCollection;
 import org.apache.beam.sdk.values.TypeDescriptors;
-import org.datamacgyver.Section1_ReadFiles.ReadingDataParquet2;
+import org.datamacgyver.Section1_ReadFiles.ReadingDataParquet;
 
-public class SchemaOperations3 {
+public class Script3_SchemaOperations {
 
         public static void main(String[] args) {
             String inFileParquet = "data/transformers.parquet";
             Pipeline p = Pipeline.create();
 
             //Note that I just import the Transformers record from the last section, you've already read that though, right?
-            PCollection<GenericRecord> readParquet = p.apply("ReadLines field", ParquetIO.read(ReadingDataParquet2.avroSchema).from(inFileParquet));
+            PCollection<GenericRecord> readParquet = p.apply("ReadLines field", ParquetIO.read(ReadingDataParquet.avroSchema).from(inFileParquet));
             PCollection<TransformersRecord> transformersIn = readParquet.apply("Convert Schema", MapElements.via(new TransformersRecord.MakeTransformerRecordFromGeneric()));
 
             transformersIn.apply("Preview schema data", MapElements.into(TypeDescriptors.strings()).via(x -> { System.out.println(x); return ""; }));

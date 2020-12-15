@@ -6,7 +6,7 @@ import org.apache.beam.sdk.transforms.MapElements;
 import org.apache.beam.sdk.values.PCollection;
 import org.apache.beam.sdk.values.TypeDescriptors;
 
-public class ReadingCsvWritingParquet1 {
+public class ReadingCsv {
 
     public static void main(String[] args){
         String inFileCsv = "data/transformers.csv";

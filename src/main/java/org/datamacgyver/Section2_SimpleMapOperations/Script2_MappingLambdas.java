@@ -9,7 +9,7 @@ import org.apache.beam.sdk.values.TypeDescriptors;
 import java.util.Arrays;
 import java.util.List;
 
-public class MappingLambdas {
+public class Script2_MappingLambdas {
 
     public static void main(String[] args){
         String inFileCsv = "data/transformers.csv";

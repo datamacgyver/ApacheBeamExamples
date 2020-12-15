@@ -7,10 +7,10 @@ import org.apache.beam.sdk.values.KV;
 import org.apache.beam.sdk.values.PCollection;
 import org.apache.beam.sdk.values.TypeDescriptor;
 import org.apache.beam.sdk.values.TypeDescriptors;
-import org.datamacgyver.Section1_ReadFiles.ReadingDataParquet2;
+import org.datamacgyver.Section1_ReadFiles.ReadingDataParquet;
 import org.datamacgyver.Section3_Schemas.TransformersRecord;
 
-public class CombinePerKey3 {
+public class Script3_CombinePerKey {
 
     public static void main(String[] args) {
         String inFileParquet = "data/transformers.parquet";
@@ -18,7 +18,7 @@ public class CombinePerKey3 {
 
         //Yeah, I'm sick of defining teh initial read in seperately
         PCollection<TransformersRecord> transformers = p
-                .apply("ReadLines field", ParquetIO.read(ReadingDataParquet2.avroSchema).from(inFileParquet))
+                .apply("ReadLines field", ParquetIO.read(ReadingDataParquet.avroSchema).from(inFileParquet))
                 .apply("Convert Schema", MapElements.via(new TransformersRecord.MakeTransformerRecordFromGeneric()));  //Create Schema as normal, this lets us use schema notation for the group by
 
         //As the previous section

@@ -1,7 +1,7 @@
 package org.datamacgyver.Section2_SimpleMapOperations;
 
 
-import org.datamacgyver.Section1_ReadFiles.ReadingDataParquet2;
+import org.datamacgyver.Section1_ReadFiles.ReadingDataParquet;
 import org.apache.avro.generic.GenericRecord;
 import org.apache.beam.sdk.Pipeline;
 import org.apache.beam.sdk.io.parquet.ParquetIO;
@@ -12,14 +12,14 @@ import org.apache.beam.sdk.values.PCollection;
 import org.apache.beam.sdk.values.TypeDescriptors;
 
 
-public class MappingSimpleFunctions {
+public class Script1_MappingSimpleFunctions {
 
     //TOD: I feel all these mains need to be at the top...
     public static void main(String[] args) {
         String inFileParquet = "data/transformers.parquet";
         Pipeline p = Pipeline.create();
 
-        PCollection<GenericRecord> readParquet = p.apply("ReadLines field", ParquetIO.read(ReadingDataParquet2.avroSchema).from(inFileParquet));
+        PCollection<GenericRecord> readParquet = p.apply("ReadLines field", ParquetIO.read(ReadingDataParquet.avroSchema).from(inFileParquet));
         readParquet.apply("Preview parquet data", MapElements.into(TypeDescriptors.strings()).via(x -> { System.out.println(x); return ""; }));
         //Note that, when we run the above, we get something that looks similar to a json string with all our fields and variables per record. It's pretty nice!
 

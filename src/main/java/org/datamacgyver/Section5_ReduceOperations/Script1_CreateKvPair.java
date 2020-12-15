@@ -4,10 +4,10 @@ import org.apache.beam.sdk.Pipeline;
 import org.apache.beam.sdk.io.parquet.ParquetIO;
 import org.apache.beam.sdk.transforms.MapElements;
 import org.apache.beam.sdk.values.*;
-import org.datamacgyver.Section1_ReadFiles.ReadingDataParquet2;
+import org.datamacgyver.Section1_ReadFiles.ReadingDataParquet;
 import org.datamacgyver.Section3_Schemas.TransformersRecord;
 
-public class CreateKvPair1 {
+public class Script1_CreateKvPair {
 
     public static void main(String[] args) {
         String inFileParquet = "data/transformers.parquet";
@@ -15,7 +15,7 @@ public class CreateKvPair1 {
 
         //Yeah, I'm sick of defining teh initial read in seperately
         PCollection<TransformersRecord> transformers = p
-                .apply("ReadLines field", ParquetIO.read(ReadingDataParquet2.avroSchema).from(inFileParquet))
+                .apply("ReadLines field", ParquetIO.read(ReadingDataParquet.avroSchema).from(inFileParquet))
                 .apply("Convert Schema", MapElements.via(new TransformersRecord.MakeTransformerRecordFromGeneric()));  //Create Schema as normal, this lets us use schema notation for the group by
 
         PCollection<KV<String, TransformersRecord>> transformersKV = transformers

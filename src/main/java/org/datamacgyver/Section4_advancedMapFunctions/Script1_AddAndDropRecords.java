@@ -7,20 +7,20 @@ import org.apache.beam.sdk.transforms.MapElements;
 import org.apache.beam.sdk.transforms.ParDo;
 import org.apache.beam.sdk.values.PCollection;
 import org.apache.beam.sdk.values.TypeDescriptors;
-import org.datamacgyver.Section1_ReadFiles.ReadingDataParquet2;
+import org.datamacgyver.Section1_ReadFiles.ReadingDataParquet;
 import org.datamacgyver.Section3_Schemas.TransformersRecord;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class AddAndDropRecords1 {
+public class Script1_AddAndDropRecords {
 
     public static void main(String[] args) {
         String inFileParquet = "data/transformers.parquet";
         Pipeline p = Pipeline.create();
 
         PCollection<TransformersRecord> transformersIn = p
-                .apply("ReadLines field", ParquetIO.read(ReadingDataParquet2.avroSchema).from(inFileParquet))
+                .apply("ReadLines field", ParquetIO.read(ReadingDataParquet.avroSchema).from(inFileParquet))
                 .apply("Convert Schema", MapElements.via(new TransformersRecord.MakeTransformerRecordFromGeneric()));
 
         //In this example, we are applying two sepearte transforms to the same input data. That's completely
