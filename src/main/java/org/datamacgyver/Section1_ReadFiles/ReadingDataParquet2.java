@@ -1,4 +1,4 @@
-package org.datamacgyver.ReadFiles1;
+package org.datamacgyver.Section1_ReadFiles;
 
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericRecord;
@@ -8,7 +8,7 @@ import org.apache.beam.sdk.transforms.MapElements;
 import org.apache.beam.sdk.values.PCollection;
 import org.apache.beam.sdk.values.TypeDescriptors;
 
-public class ReadingDataParquet {
+public class ReadingDataParquet2 {
 
     static String schemaJSON =
             "{\"namespace\": \"ioitavro\",\n"
@@ -24,7 +24,7 @@ public class ReadingDataParquet {
             + " ]\n"
             + "}";
 
-    static Schema avroSchema = new Schema.Parser().parse(schemaJSON);
+    public static Schema avroSchema = new Schema.Parser().parse(schemaJSON);
 
     public static void main(String[] args) {
         String inFileParquet = "data/transformers.parquet";

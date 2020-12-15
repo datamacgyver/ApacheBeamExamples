@@ -1,4 +1,4 @@
-package org.datamacgyver.SimpleMapOperations2;
+package org.datamacgyver.Section2_SimpleMapOperations;
 
 import org.apache.beam.sdk.Pipeline;
 import org.apache.beam.sdk.io.TextIO;

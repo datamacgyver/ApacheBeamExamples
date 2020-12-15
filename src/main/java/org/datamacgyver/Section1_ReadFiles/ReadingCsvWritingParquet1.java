@@ -1,4 +1,4 @@
-package org.datamacgyver.ReadFiles1;
+package org.datamacgyver.Section1_ReadFiles;
 
 import org.apache.beam.sdk.Pipeline;
 import org.apache.beam.sdk.io.TextIO;
@@ -6,7 +6,7 @@ import org.apache.beam.sdk.transforms.MapElements;
 import org.apache.beam.sdk.values.PCollection;
 import org.apache.beam.sdk.values.TypeDescriptors;
 
-public class ReadingDataCsv {
+public class ReadingCsvWritingParquet1 {
 
     public static void main(String[] args){
         String inFileCsv = "data/transformers.csv";

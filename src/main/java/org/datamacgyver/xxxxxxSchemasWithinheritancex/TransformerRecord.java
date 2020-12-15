@@ -1,6 +1,7 @@
-package org.datamacgyver.SchemasWithinheritance5;
+package org.datamacgyver.xxxxxxSchemasWithinheritancex;
 
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import lombok.With;
 import org.apache.avro.generic.GenericRecord;
 import org.apache.beam.sdk.schemas.JavaBeanSchema;
@@ -10,26 +11,16 @@ import org.apache.beam.sdk.transforms.SimpleFunction;
 
 @DefaultSchema(JavaBeanSchema.class)
 @Data
+@RequiredArgsConstructor(onConstructor=@__({@SchemaCreate}))
 class TransformersRecord{
 
-    @With
-    private final String name;
+    @With private final String name;
     @With private final String alternateForm;
     @With private final String combiner;
     @With private final String allegiance;
     @With private final int firstApperanceSeason;
     @With private final int firstApperanceEpisode;
 
-    @SchemaCreate
-    public TransformersRecord(String name, String alternateForm, String combiner, String allegiance,
-                              int firstApperanceSeason, int firstApperanceEpisode) {
-        this.name = name;
-        this.alternateForm = alternateForm;
-        this.combiner = combiner;
-        this.allegiance = allegiance;
-        this.firstApperanceSeason = firstApperanceSeason;
-        this.firstApperanceEpisode = firstApperanceEpisode;
-    }
 
     public static class MakeTransformerRecordFromGeneric extends SimpleFunction<GenericRecord, TransformersRecord> {
         @Override public TransformersRecord apply(GenericRecord r) {
@@ -54,12 +45,3 @@ class TransformersRecord{
     }
 }
 
-@Data
-class CombinerRecord extends TransformersRecord{
-
-
-    @SchemaCreate
-    public CombinerRecord(String name, String alternateForm, String combiner, String allegiance, int firstApperanceSeason, int firstApperanceEpisode) {
-        super(name, alternateForm, combiner, allegiance, firstApperanceSeason, firstApperanceEpisode);
-    }
-}

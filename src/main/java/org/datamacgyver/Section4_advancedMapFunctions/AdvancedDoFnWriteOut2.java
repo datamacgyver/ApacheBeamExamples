@@ -1,4 +1,4 @@
-package org.datamacgyver.AdvancedMapFunctions4;
+package org.datamacgyver.Section4_advancedMapFunctions;
 
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericRecord;
@@ -9,6 +9,7 @@ import org.apache.beam.sdk.transforms.DoFn;
 import org.apache.beam.sdk.transforms.ParDo;
 import org.apache.beam.sdk.transforms.windowing.GlobalWindow;
 import org.apache.beam.sdk.values.PCollection;
+import org.datamacgyver.Section1_ReadFiles.ReadingDataParquet2;
 import org.joda.time.Instant;
 
 import java.util.ArrayList;
@@ -16,30 +17,14 @@ import java.util.List;
 
 public class AdvancedDoFnWriteOut2 {
 
-    static String schemaJSON =
-            "{\"namespace\": \"ioitavro\",\n"
-                    + " \"type\": \"record\",\n"
-                    + " \"name\": \"TransformersSchema\",\n"
-                    + " \"fields\": [\n"
-                    + "{\"name\": \"Name\", \"type\": \"string\"},\n"
-                    + "{\"name\": \"AlternateForm\", \"type\": \"string\"},\n"
-                    + "{\"name\": \"Combiner\", \"type\": [\"string\", \"null\"]},\n"  //TODO: Note the nullable here
-                    + "{\"name\": \"allegiance\", \"type\": \"string\"},\n"
-                    + "{\"name\": \"FirstApperanceSeason\", \"type\": \"int\"},\n"
-                    + "{\"name\": \"FirstApperanceEpisode\", \"type\": \"int\"}\n"
-                    + " ]\n"
-                    + "}";
-
-    static Schema avroSchema = new Schema.Parser().parse(schemaJSON);
-
     public static void main(String[] args) {
         String inFileParquet = "data/transformers.parquet";
         Pipeline p = Pipeline.create();
 
-        PCollection<GenericRecord> readParquet = p.apply("ReadLines field", ParquetIO.read(avroSchema).from(inFileParquet));
+        PCollection<GenericRecord> readParquet = p.apply("ReadLines field", ParquetIO.read(ReadingDataParquet2.avroSchema).from(inFileParquet));
 
         readParquet
-                .apply("Map records to strings", ParDo.of(new GetCsvLines(avroSchema)))
+                .apply("Map records to strings", ParDo.of(new GetCsvLines(ReadingDataParquet2.avroSchema)))
                 .apply("Write CSV formatted data", TextIO.write().to("exampleOutputs/csvTest").withSuffix(".csv"));
 
         p.run().waitUntilFinish();
