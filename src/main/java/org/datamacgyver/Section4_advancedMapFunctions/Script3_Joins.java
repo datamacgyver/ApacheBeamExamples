@@ -13,46 +13,43 @@ import org.datamacgyver.Section3_Schemas.TransformersRecord;
 
 public class Script3_Joins {
 
-
-    //TOD: I feel all these mains need to be at the top...
     public static void main(String[] args) {
         String inFileParquet = "data/transformers.parquet";
         Pipeline p = Pipeline.create();
 
+        // You've seen this bit a lot already!
         PCollection<TransformersRecord> transformersIn = p
                 .apply("ReadLines field", ParquetIO.read(ReadingDataParquet.avroSchema).from(inFileParquet))
                 .apply("Convert Schema", MapElements.via(new TransformersRecord.MakeTransformerRecordFromGeneric()));
 
+        // The secondary data I'm using to join is the inLine demo data I used in Section 1. You can checkout it's schema there.
         PCollection<Row> episodes = p
                 .apply("Get the inline episodes", Create.of(InLineData.episodesList).withCoder(RowCoder.of(InLineData.episodeRowSchema)));
 
         //First we need to create key value pairs for each of our records. You can do this in several ways, for example using schema notation
-        //or a lambda/simple function. I'm going for the second option as it lets me maintain my original schemas and not convert things to
-        //rows.
+        //or a lambda/simple function. I'm using a lambda as that probably is the place where you need to see some more examples!
         PCollection<KV<String, String>> episodesKV = episodes
                 .apply("Create episodes kv", MapElements
-                        .into(TypeDescriptors.kvs(TypeDescriptors.strings(), TypeDescriptors.strings()))
+                        .into(TypeDescriptors.kvs(TypeDescriptors.strings(), TypeDescriptors.strings()))                         //You can see how messy the TypeDescriptors can get here!
                         .via(r -> KV.of(
-                                r.getValue("Season").toString() + "-" + r.getValue("Episode").toString(),
+                                r.getValue("Season").toString() + "-" + r.getValue("Episode").toString(),   //You can see how messy Row records can get here!
                                 r.getValue("EpisodeTitle").toString())));
 
         PCollection<KV<String, TransformersRecord>> transformersKV = transformersIn
                 .apply("Create transformers kv", MapElements
-                        .into(TypeDescriptors.kvs(TypeDescriptors.strings(), TypeDescriptor.of(TransformersRecord.class)))
+                        .into(TypeDescriptors.kvs(TypeDescriptors.strings(), TypeDescriptor.of(TransformersRecord.class)))       //You can see how messy the TypeDescriptors can get here!
                         .via(r -> KV.of(r.getFirstApperanceSeason() + "-" + r.getFirstApperanceEpisode(), r)));
 
-        //Note that there are two kinds of join in Beam, this uses `org.apache.beam.sdk.extensions.joinlibrary.Join`. The other one is 
-        //for schema joins. 
+        //Now we can join on these Keys. I've used strings here but you can also use ints, or even Java objects with
+        // .equals() to get what you want. Note that there are two kinds of join in Beam, this uses
+        // `org.apache.beam.sdk.extensions.joinlibrary.Join`. The other one is  for schema joins.
         PCollection<KV<String, KV<TransformersRecord, String>>> joinedData = Join.innerJoin(transformersKV, episodesKV);
+        //Our PCollection type has got a little messy as we have the join key and the left and right hand side values.
+        // You can process these out using a lambda quite easily, for example `x -> KV::getValues` if you want to.
+
         joinedData.apply("Preview parquet data", MapElements.into(TypeDescriptors.strings()).via(x -> { System.out.println(x);return ""; }));
         p.run().waitUntilFinish();
 
     }
 
-//    class makeEpisodeJoinKey extends SimpleFunction<String, List<String>> {
-//        @Override
-//        public List<String> apply(String word) {
-//            return Arrays.asList(word, "Its weekend!");
-//        }
-//    }
 }

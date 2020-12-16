@@ -13,14 +13,16 @@ public class Script1_CreateKvPair {
         String inFileParquet = "data/transformers.parquet";
         Pipeline p = Pipeline.create();
 
-        //Yeah, I'm sick of defining teh initial read in seperately
+        //We are continuing to use a Schema here as it makes the code much nicer through gettters etc.
         PCollection<TransformersRecord> transformers = p
                 .apply("ReadLines field", ParquetIO.read(ReadingDataParquet.avroSchema).from(inFileParquet))
-                .apply("Convert Schema", MapElements.via(new TransformersRecord.MakeTransformerRecordFromGeneric()));  //Create Schema as normal, this lets us use schema notation for the group by
+                .apply("Convert Schema", MapElements.via(new TransformersRecord.MakeTransformerRecordFromGeneric()));
 
+        //This simply reinforces something we saw in Section 4: how to create Key value pairs from our records using a
+        // lambda
         PCollection<KV<String, TransformersRecord>> transformersKV = transformers
                 .apply("Create Key Value Pairs", MapElements  //Here we are using a lambda to create the
-                        .into(TypeDescriptors.kvs(TypeDescriptors.strings(), TypeDescriptor.of(TransformersRecord.class)))  //TODO: Notes on this and make sure there's good stuff in the lambda function bit
+                        .into(TypeDescriptors.kvs(TypeDescriptors.strings(), TypeDescriptor.of(TransformersRecord.class)))
                         .via(r -> KV.of(r.getCombiner(), r)))
                 ;
 

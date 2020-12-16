@@ -18,18 +18,21 @@ public class Script2_BeamSqlBasicJoins {
         String inFileParquet = "data/transformers.parquet";
         Pipeline p = Pipeline.create();
 
+        // We need a schema to get column names in sql
         PCollection<TransformersRecord> transformers = p
                 .apply("ReadLines field", ParquetIO.read(ReadingDataParquet.avroSchema).from(inFileParquet))
-                .apply("Convert Schema", MapElements.via(new TransformersRecord.MakeTransformerRecordFromGeneric()));  //Create Schema as normal, this lets us use schema notation for the group by
+                .apply("Convert Schema", MapElements.via(new TransformersRecord.MakeTransformerRecordFromGeneric()));
 
+        // Our joined data is our inline definition of an episode
         PCollection<Row> episodes = p
                 .apply("Get the inline episodes", Create.of(InLineData.episodesList).withCoder(RowCoder.of(InLineData.episodeRowSchema)));
 
+        //This time we need two tuple types as there are two collections needing names
         PCollectionTuple transformersTuple = PCollectionTuple
                 .of(new TupleTag<>("transformers"), transformers)
                 .and(new TupleTag<>("episodes"), episodes);
 
-        //Note that we are again getting a row schema, it's good enough.
+
         PCollection<Row> transformersSql = transformersTuple.apply(
                 SqlTransform.query(
                         "SELECT transformers.*,  episodes.EpisodeTitle " +

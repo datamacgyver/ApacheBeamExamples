@@ -16,23 +16,18 @@ public class Script3_CombinePerKey {
         String inFileParquet = "data/transformers.parquet";
         Pipeline p = Pipeline.create();
 
-        //Yeah, I'm sick of defining teh initial read in seperately
         PCollection<TransformersRecord> transformers = p
                 .apply("ReadLines field", ParquetIO.read(ReadingDataParquet.avroSchema).from(inFileParquet))
-                .apply("Convert Schema", MapElements.via(new TransformersRecord.MakeTransformerRecordFromGeneric()));  //Create Schema as normal, this lets us use schema notation for the group by
+                .apply("Convert Schema", MapElements.via(new TransformersRecord.MakeTransformerRecordFromGeneric()));
 
-        //As the previous section
+        //As in Script 1
         PCollection<KV<String, TransformersRecord>> transformersKV = transformers
                 .apply("Create Key Value Pairs", MapElements
                         .into(TypeDescriptors.kvs(TypeDescriptors.strings(), TypeDescriptor.of(TransformersRecord.class)))
                         .via(r -> KV.of(r.getCombiner(), r)));
 
-        //TODO: more comments
-        //Note I'm doing String values here, it's simply so we can show how the accumulator works, I didn't want to build it as <TransformersRecord, Integer, Integer> as it'd be harder to see what's going on.
+        //Note that Combine doesn't require that first groupBy phase in Script 2. As always, the magic is in the class
         PCollection<KV<String, String>> combinerCount = transformersKV
-//                .apply("Group by our key", GroupByKey.create())
-//                .apply("Combine our values", ParDo.of(new CombinerCount()))
-                //So we no longer need either of these lines, instead we just need the one:
                 .apply(Combine.perKey(new TransformerAggregatorFn()))
                 ;
 
@@ -40,29 +35,29 @@ public class Script3_CombinePerKey {
         p.run().waitUntilFinish();
     }
 
-    //TODO: More comments
-    //TODO: I've moved these classes inside our main classes, I should probably add some documentation about that....
-    //This one is pretty cool. What it does is calculate each result locally, without the need for getting all the keys in one place,
-//It then merges all the seperate accumulators and outputs a final answer, hence the need for three input types: Input type, accumulator type and output type.
-//I've used Ints and string here but there's nothing to stop you doing something more complex such as having schema objects on output.
-//This type can be faster at scale (but slower on smaller datasets). It also allows hot-keys to be parellelised, thus removing the need to care
-//about skew. It does, however require that the interim results be sent over the wire, therefore keep your objects small and please, please, please don't
-//grow lists!
-    static class TransformerAggregatorFn extends Combine.CombineFn<TransformersRecord, Integer, String> {  //<Input, accumulator, output>
+    //This one is pretty cool. What it does is calculate each result locally, without the need for getting all the keys
+    // in one place, it then merges all the separate accumulators and outputs a final answer, hence the need for three
+    // input types: Input type, accumulator type and output type.
+    //I've used ints and string here but there's nothing to stop you doing something more complex such as having
+    // schema objects on output.
+    //This type can be faster at scale (but slower on smaller datasets). It also allows hot-keys to be parellelised,
+    // thus removing the need to care about skew. It does, however, require that the interim results be sent over
+    // the wire, therefore keep your objects small and please, please, please don't grow lists!
+    static class TransformerAggregatorFn extends Combine.CombineFn<TransformersRecord, Integer, String> {  //<Input type, accumulator type, output type>
 
         @Override
-        public Integer createAccumulator() {
+        public Integer createAccumulator() {                                        //Instansiates an accumulator object
             return 0;
         }
 
         @Override
-        public Integer addInput(Integer accumulator, TransformersRecord input) {
+        public Integer addInput(Integer accumulator, TransformersRecord input) {    //Adds a new record to the accumulator and does something.
             accumulator++;
             return accumulator;
         }
 
         @Override
-        public Integer mergeAccumulators(Iterable<Integer> accumulators) {
+        public Integer mergeAccumulators(Iterable<Integer> accumulators) {          //Once all the accumulation has been done locally, the seperate accumulators need to be merged.
             Integer total = 0;
             for (Integer accumulator : accumulators) {
                 total += accumulator;
@@ -71,7 +66,7 @@ public class Script3_CombinePerKey {
         }
 
         @Override
-        public String extractOutput(Integer accumulator) {
+        public String extractOutput(Integer accumulator) {                          //You then extract the required output from the merged accumulators.
             return "Number of transformers: " + accumulator;
         }
 

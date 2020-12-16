@@ -14,14 +14,15 @@ public class Script1_BeamSqlBasicSelects {
         String inFileParquet = "data/transformers.parquet";
         Pipeline p = Pipeline.create();
 
-        //Yeah, I'm sick of defining teh initial read in seperately
+        // We need the schema for the column names in SQL
         PCollection<TransformersRecord> transformers = p
                 .apply("ReadLines field", ParquetIO.read(ReadingDataParquet.avroSchema).from(inFileParquet))
-                .apply("Convert Schema", MapElements.via(new TransformersRecord.MakeTransformerRecordFromGeneric()));  //Create Schema as normal, this lets us use schema notation for the group by
+                .apply("Convert Schema", MapElements.via(new TransformersRecord.MakeTransformerRecordFromGeneric()));
 
+        //This defines a tuple tag, basically gives our Pcollection a name so we can refer to it in SQL
         PCollectionTuple transformersTuple = PCollectionTuple.of(new TupleTag<>("transformers"), transformers);
 
-        //Note that we are again getting a row schema, it's good enough.
+        //Note that we are again getting a row schema as an output.
         PCollection<Row> transformersSql = transformersTuple.apply(
                 SqlTransform.query(
                         "SELECT name, combiner "
