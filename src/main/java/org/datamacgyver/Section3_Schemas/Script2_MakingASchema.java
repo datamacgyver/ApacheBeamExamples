@@ -14,7 +14,12 @@ public class Script2_MakingASchema {
             String inFileParquet = "data/transformers.parquet";
             Pipeline p = Pipeline.create();
 
+            //We read our generic records as normal...
             PCollection<GenericRecord> readParquet = p.apply("ReadLines field", ParquetIO.read(ReadingDataParquet.avroSchema).from(inFileParquet));
+
+            //Then we apply a SimpleFunction to make a TransformersRecord. At this point, please go to the
+            // TransformersRecord Class that's in this directory to see how it works! If you are in IntelliJ just
+            // Ctrl+left click.
             PCollection<TransformersRecord> transformersIn = readParquet.apply("Convert Schema", MapElements.via(new TransformersRecord.MakeTransformerRecordFromGeneric()));
 
             //This will use my tostring function that lombok has made me.

@@ -16,12 +16,15 @@ public class Script1_Immutability {
 
         PCollection<GenericRecord> readParquet = p.apply("ReadLines field", ParquetIO.read(ReadingDataParquet.avroSchema).from(inFileParquet));
 
-        //We've already seen that getting data out of a GenericRecord can be problematic. We also have the additional problem that *REcords are immutable* that is, they cannot be modified as part of any operation.
-        //Therefore to update a value you need to make a new one. See, for example, this operation, which will raise with an error about changing unputs.
+        //We've already seen that getting data out of a GenericRecord can be problematic. We also have the additional
+        // problem that *Records are immutable* that is, they cannot be modified as part of any operation. Therefore
+        // to update a value you need to make a new one. See, for example, this operation, which will raise
+        // with an error about changing inputs.
         readParquet.apply("Fill nulls", MapElements.via(new FillNulls()));
         p.run().waitUntilFinish();
 
-        //For it to work I'd need to make a new Generic Record and add in the old values, if I was doing that, I may as well setup a proper Beam schema which comes with side-benefits....
+        //For it to work I'd need to make a new Generic Record and add in the old values, if I was doing that, I may
+        // as well setup a proper Beam schema which comes with side-benefits....
     }
 
     public static class FillNulls extends SimpleFunction<GenericRecord, GenericRecord> {

@@ -13,7 +13,7 @@ import org.apache.beam.sdk.values.TypeDescriptors;
 import org.datamacgyver.Section1_ReadFiles.ReadingDataParquet;
 import org.datamacgyver.Section3_Schemas.TransformersRecord;
 
-public class GroupByKey2 {
+public class Script2_GroupByKey {
 
     public static void main(String[] args) {
         String inFileParquet = "data/transformers.parquet";

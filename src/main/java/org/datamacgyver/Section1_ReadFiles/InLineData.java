@@ -11,34 +11,30 @@ import org.apache.beam.sdk.values.PCollection;
 import org.apache.beam.sdk.values.Row;
 import org.apache.beam.sdk.values.TypeDescriptors;
 
-import java.util.Date;
-
 public class InLineData {
 
-    public static void main(String[] args) {
-        String inFileCsv = "data/transformers.csv";
-        Pipeline p = Pipeline.create();
-
-        // Define the schema for the records.
-        Schema appSchema = Schema
+        // Define the Row schema for the records. Note ROW SCHEMA.
+        public static Schema episodeRowSchema = Schema
                 .builder()
-                .addInt32Field("appId")
-                .addStringField("description")
-                .addDateTimeField("rowtime")
+                .addInt32Field("Season")
+                .addInt32Field("Episode")
+                .addStringField("EpisodeTitle")
                 .build();
 
         // Create a row with that type.
-        Row row = Row
-                .withSchema(appSchema)
-                .addValues(1, "Some cool app", new Date())
+        public static Row episodesList = Row
+                .withSchema(episodeRowSchema)
+                .addValues(1, 4, "S.O.S. Dinobots")
                 .build();
 
-        // Create a source PCollection containing only that row. We will talk more about rows later.
-        //This process is most useful for creating demo and test data.
-        //TODO: Talk about rows.
-        PCollection<Row> exampleData = p.apply(Create.of(row).withCoder(RowCoder.of(appSchema)));
+    public static void main(String[] args) {
+        Pipeline p = Pipeline.create();
+
+        // Create a source PCollection containing only that row.
+        PCollection<Row> exampleData = p.apply(Create.of(episodesList).withCoder(RowCoder.of(episodeRowSchema)));
 
         exampleData.apply("Preview created data", MapElements.into(TypeDescriptors.strings()).via(x -> { System.out.println(x); return ""; }));
+        p.run().waitUntilFinish();
 
     }
 }

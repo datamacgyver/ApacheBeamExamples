@@ -14,9 +14,7 @@ public class ReadingCsv {
 
         PCollection<String> readCsv = p.apply("Read CSV files", TextIO.read().from(inFileCsv));
 
-        //Apologies for this. I need it to show you the read in. It's not yet important to understand (it is the next thing I'll explain!!!!!
         readCsv.apply("Preview csv data", MapElements.into(TypeDescriptors.strings()).via(x -> {System.out.println(x); return "";}));
-
         p.run().waitUntilFinish();
     }
 

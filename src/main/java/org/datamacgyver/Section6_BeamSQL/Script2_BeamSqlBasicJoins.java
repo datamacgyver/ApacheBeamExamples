@@ -1,13 +1,16 @@
 package org.datamacgyver.Section6_BeamSQL;
 
 import org.apache.beam.sdk.Pipeline;
+import org.apache.beam.sdk.coders.RowCoder;
 import org.apache.beam.sdk.extensions.sql.SqlTransform;
 import org.apache.beam.sdk.io.parquet.ParquetIO;
-import org.apache.beam.sdk.schemas.transforms.Filter;
+import org.apache.beam.sdk.transforms.Create;
 import org.apache.beam.sdk.transforms.MapElements;
 import org.apache.beam.sdk.values.*;
+import org.datamacgyver.Section1_ReadFiles.InLineData;
 import org.datamacgyver.Section1_ReadFiles.ReadingDataParquet;
 import org.datamacgyver.Section3_Schemas.TransformersRecord;
+
 
 public class Script2_BeamSqlBasicJoins {
 
@@ -19,20 +22,21 @@ public class Script2_BeamSqlBasicJoins {
                 .apply("ReadLines field", ParquetIO.read(ReadingDataParquet.avroSchema).from(inFileParquet))
                 .apply("Convert Schema", MapElements.via(new TransformersRecord.MakeTransformerRecordFromGeneric()));  //Create Schema as normal, this lets us use schema notation for the group by
 
-        PCollection<TransformersRecord> decepticons = transformers.apply(Filter.<TransformersRecord>create().whereFieldName("allegiance", c -> c.equals("Decepticon")));
-        PCollection<TransformersRecord> autobots = transformers.apply(Filter.<TransformersRecord>create().whereFieldName("allegiance", c -> c.equals("Autobot")));
+        PCollection<Row> episodes = p
+                .apply("Get the inline episodes", Create.of(InLineData.episodesList).withCoder(RowCoder.of(InLineData.episodeRowSchema)));
 
         PCollectionTuple transformersTuple = PCollectionTuple
-                .of(new TupleTag<>("decepticon"), decepticons)
-                .and(new TupleTag<>("autobot"), autobots);
+                .of(new TupleTag<>("transformers"), transformers)
+                .and(new TupleTag<>("episodes"), episodes);
 
         //Note that we are again getting a row schema, it's good enough.
         PCollection<Row> transformersSql = transformersTuple.apply(
                 SqlTransform.query(
-                        "SELECT decepticon.* " +
-                                "FROM decepticon " +
-                                "INNER JOIN autobot " +
-                                "ON decepticon.firstApperanceSeason = autobot.firstApperanceSeason"));
+                        "SELECT transformers.*,  episodes.EpisodeTitle " +
+                                "FROM transformers " +
+                                "INNER JOIN episodes " +
+                                "ON transformers.firstApperanceSeason = episodes.Season " +
+                                "AND transformers.firstApperanceEpisode = episodes.Episode"));
 
         // You can also use an interactive SQL shell: https://beam.apache.org/documentation/dsls/sql/shell/
         // There's a few more bits available here: https://beam.apache.org/documentation/dsls/sql/overview/

@@ -23,7 +23,7 @@ public class Script1_AddAndDropRecords {
                 .apply("ReadLines field", ParquetIO.read(ReadingDataParquet.avroSchema).from(inFileParquet))
                 .apply("Convert Schema", MapElements.via(new TransformersRecord.MakeTransformerRecordFromGeneric()));
 
-        //In this example, we are applying two sepearte transforms to the same input data. That's completely
+        //In this example, we are applying two separate transforms to the same input data. That's completely
         //fine and let's you do branching operations and transforms.
 
         //Transform 1:
