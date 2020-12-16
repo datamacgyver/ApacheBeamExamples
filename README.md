@@ -1,7 +1,6 @@
-TODO: Add some links in all below.
-TODO: Need to add a nod to the specific guides (https://beam.apache.org/documentation/transforms/java/overview/) as well as teh programming guide
-TODO: A nod to composite functions. 
-TODO: Add more fields to the data, perhaps also split up so we can do inheretence. 
+TODO: Add some links in all below.  
+TODO: Need to add a nod to the specific guides (https://beam.apache.org/documentation/transforms/java/overview/) as well as teh programming guide  
+TODO: A nod to composite functions.   
 
 # ApacheBeamExamples
 Some learnings from how beam works, hoping to blogify it later. I would advise you 
@@ -157,10 +156,10 @@ workaround but I haven't had the time or inclination to fix it.
 * Beam Records are immutable! You should not try to alter the inputs 
 of a mapping operation, instead return new ones. 
 
-## Where to go from here? 
-https://cloud.google.com/blog/products/gcp/writing-dataflow-pipelines-with-scalability-in-mind
+## Where to go from here?  
+https://cloud.google.com/blog/products/gcp/writing-dataflow-pipelines-with-scalability-in-mind  
 also some beam links. 
 
 ## References
-https://tokluo.wordpress.com/2016/01/31/using-intellij-to-write-your-application/#:~:text=To%20add%20the%20Hadoop%20module,Select%20JARS%20or%20directories.
-https://archive.apache.org/dist/hadoop/core/hadoop-2.7.1/
+https://tokluo.wordpress.com/2016/01/31/using-intellij-to-write-your-application/#:~:text=To%20add%20the%20Hadoop%20module,Select%20JARS%20or%20directories.  
+https://archive.apache.org/dist/hadoop/core/hadoop-2.7.1/  
