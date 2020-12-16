@@ -1,28 +1,46 @@
-TODO: Add some links in all below.  
-TODO: Need to add a nod to the specific guides (https://beam.apache.org/documentation/transforms/java/overview/) as well as teh programming guide  
-TODO: A nod to composite functions.   
-
 # ApacheBeamExamples
 Some learnings from how beam works, hoping to blogify it later. I would advise you 
 to read this whole document before you embark on your own journey but for those
-that wish to dip in and out I've got the contents of the various sections below. 
+that wish to dip in and out I've got the contents of the various sections just 
+below here. If you scroll further you will find notes on some setup steps, 
+gremlins and notes that will be worth reading. 
 
-If you scroll further you will find notes on some setup steps, gremlins and notes that
-will be worth reading. 
+The [programming guide for Beam](https://beam.apache.org/documentation/programming-guide/) 
+is great but often I find that it doesn't match the functionality 
+available in the code and the "simple" solutions often require some 
+diamond operators or pre-calculation. As such, I've needed to work 
+a few things out on my own.  
 
 Note that, all scripts in this repo should be runnable, just pull it, open in 
 IntelliJ and import as a Maven project. The data are pushed too and they are, 
 of course, a [record of Generation 1 Transformers](https://en.wikipedia.org/wiki/Transformers:_Generation_1). 
 
+## Words of warning
+First and foremost. I am a Data Scientist that enjoys tech, I am not
+a java dev, nor am I formally trained in computer science. I do 
+however love solving problems and we are currently trialing Beam 
+as a solution to our EL(T) problems. As such, this is both a care 
+and share on how Beam works and a chance for me to clarify my 
+learnings. 
+
+I can already hear the question: *"You are a Data Scientist, why 
+is this not in Python?"* well, from what I can tell, once deployed
+I would add my Python scripts to the Java ones that the devs have
+put out. Also, our devs prefer Java and I'd like to learn some 
+more Object Orientated stuff. 
+
+Finally, I built this using IntelliJ so some setup steps may be 
+peculiar to that. 
+
 ## Section Summaries
 Although you can dip into these in whatever order you feel like, concepts are 
-introduced in order so, if you start in section 4 and don't know what a Row is, 
-it has been explained, just checkout the readmes for previous sections!
+introduced in order so, if you start in section 4 and don't know what a lambda is, 
+it has been explained, just checkout the the previous readme!
 
 ### Section 1 - Reading files
 What it says on the tin! This is very basic reads from CSVs and Parquet, if you 
 want to use anything more exciting I point you in the direction of a more  
-complex github repo: [here](https://github.com/rishisinghal/BeamPipelineSamples).
+complex github repo [here](https://github.com/rishisinghal/BeamPipelineSamples).
 
 I also introduce basic components such as Collections, types, Pipelines, 
 apply methods and how to generate inline test data. 
@@ -53,37 +71,13 @@ for Beam. IMHO, I think having a SQL string in the middle of your code can
 feel a bit icky but it can replace some pretty heavy boilerplate when used 
 right. 
 
-## Beam documentation 
-The [programming guide for Beam](https://beam.apache.org/documentation/programming-guide/) 
-is great but often I find that it doesn't match the functionality 
-available in the code and the "simple" solutions often require some 
-diamond operators or pre-calculation. As such, I've needed to work 
-a few things out on my own.  
-
-## Words of warning
-First and foremost. I am a Data Scientist that enjoys tech, I am not
-a java dev, nor am I formally trained in computer science. I do 
-however love solving problems and we are currently trialing Beam 
-as a solution to our EL(T) problems. As such, this is both a care 
-and share on how Beam works and a chance for me to clarify my 
-learnings. 
-
-I can already hear the question: *"You are a Data Scientist, why 
-is this not in Python?"* well, from what I can tell, once deployed
-I would add my Python scripts to the Java ones that the devs have
-put out. Also, our devs prefer Java and I'd like to learn some 
-more Object Orientated stuff. 
-
-Finally, I built this using IntelliJ so some setup steps may be 
-peculiar to that. 
-
 ## Main args
 Beam has some strong (and correct) opinions on how to pass arguments to 
 your ELT process. This is recommended so you can, for example, pass file
-names at runtime. I will not be adding this at this time. There's plenty of 
-info out there on how they work (REF) and what I want to get accross is more 
-how Beam works and the core functions without getting bogged down in boiler 
-plate. I may add this in a later version.
+names at runtime. I will not be adding this at this time. [There's plenty of 
+info out there on how they work](https://github.com/apache/beam/blob/master/examples/java/src/main/java/org/apache/beam/examples/WordCount.java)
+and what I want to get across is more how Beam works and the core functions 
+without getting bogged down in boiler plate. I may add this in a later version.
  
 
 ## Setup
@@ -156,10 +150,7 @@ workaround but I haven't had the time or inclination to fix it.
 * Beam Records are immutable! You should not try to alter the inputs 
 of a mapping operation, instead return new ones. 
 
-## Where to go from here?  
-https://cloud.google.com/blog/products/gcp/writing-dataflow-pipelines-with-scalability-in-mind  
-also some beam links. 
-
-## References
-https://tokluo.wordpress.com/2016/01/31/using-intellij-to-write-your-application/#:~:text=To%20add%20the%20Hadoop%20module,Select%20JARS%20or%20directories.  
-https://archive.apache.org/dist/hadoop/core/hadoop-2.7.1/  
+# Where Next?
+* [Java functions](https://beam.apache.org/documentation/transforms/java/overview/)  
+* [Beam Programming Guide](https://beam.apache.org/documentation/programming-guide/)
+* [Beam Quickstart](https://beam.apache.org/get-started/quickstart-java/)
